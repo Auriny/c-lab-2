@@ -61,20 +61,30 @@ void convertDegrees() {
     print("В гр. по Фаренгейту: %.2lf\n", c * 9 / 5 + 32);
 }
 
-void test(void) {
-    int aa = 0;
-    int bb = 0;
-    print("Введите a и b: ");
-    scanf("%u", &aa);
-    scanf("%u", &bb);
-    for (int i = aa; i < (bb + 1); i++) {
-        int t = 0;
-        for (int j = 0; j < i; j++) {
-            t = t + i;
-        }
+void fibonacci(void) {
+    int a, b;
 
-        print("%zu ** 2 = %zu \n", i, t);
+    print("Введите a и b");
+    scanf("%d %d", &a, &b);
+
+    const int n = a + b;
+    long long f0 = 0, f1 = 1, fn = 0;
+
+    for (int i = 2; i <= n; i++) {
+        fn = f0 + f1;
+        f0 = f1;
+        f1 = fn;
     }
+
+    if (n == 1) {
+        fn = 1;
+    }
+
+    if (n == 0) {
+        fn = 0;
+    }
+
+    print("f(%d) = %lld", n, fn);
 }
 
 int main(void) {
