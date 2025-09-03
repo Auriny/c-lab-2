@@ -56,9 +56,25 @@ void vars(void) {
 
 void convertDegrees() {
     double c;
-    printf("Введите температуру в гр. Цельсия: ");
+    print("Введите температуру в гр. Цельсия: ");
     scanf("%lf", &c);
-    printf("В гр. по Фаренгейту: %.2lf\n", c * 9 / 5 + 32);
+    print("В гр. по Фаренгейту: %.2lf\n", c * 9 / 5 + 32);
+}
+
+void test(void) {
+    int aa = 0;
+    int bb = 0;
+    print("Введите a и b: ");
+    scanf("%u", &aa);
+    scanf("%u", &bb);
+    for (int i = aa; i < (bb + 1); i++) {
+        int t = 0;
+        for (int j = 0; j < i; j++) {
+            t = t + i;
+        }
+
+        print("%zu ** 2 = %zu \n", i, t);
+    }
 }
 
 int main(void) {
@@ -75,7 +91,7 @@ int main(void) {
             case 1: helloWorld(); break;
             case 2: vars(); break;
             case 3: convertDegrees(); break;
-            case 4: vars(); break;
+            case 4: fibonacci(); break;
             default: print("Неизвестное действи"); break;
         }
     }
