@@ -76,13 +76,8 @@ void fibonacci(void) {
         f1 = fn;
     }
 
-    if (n == 1) {
-        fn = 1;
-    }
-
-    if (n == 0) {
-        fn = 0;
-    }
+    if (n == 1) fn = 1;
+    if (n == 0) fn = 0;
 
     print("f(%d) = %lld", n, fn);
 }
