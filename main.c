@@ -9,7 +9,6 @@ constexpr int size = 20;
 
 int array1[size];
 int array2[size];
-int arrayResult[size];
 
 void print(const char *format, ...) {
     char buffer[1024];
@@ -113,16 +112,31 @@ void arraysRandom(void) {
     for (int i = 0; i < size; i++) array2[i] = rand() % 10;
 }
 
+void del(int arr[], int *n, int pos) {
+    for (int j = pos; j < *n - 1; j++) {
+        arr[j] = arr[j + 1];
+    }
+
+    (*n)--;
+}
+
+
 void thirdArr(void) {
+    int arrayResult[size];
+    int len = 0;
+
     for (int i = 0; i < size; i++) {
         if (array1[i] == array2[i]) {
-            arrayResult[i] = array1[i];
+            arrayResult[len++] = array1[i];
         }
     }
 
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-
+    for (int i = 0; i < len; i++) {
+        for (int j = i + 1; j < len; j++) {
+            if (arrayResult[i] == arrayResult[j]) {
+                del(arrayResult, &len, j);
+                j--;
+            }
         }
     }
 
@@ -135,7 +149,7 @@ void thirdArr(void) {
     printf("\n");
 
     print("Третий массив (результат):");
-    for (int loop = 0; loop < size; loop++) printf("%d ", arrayResult[loop]);
+    for (int loop = 0; loop < len; loop++) printf("%d ", arrayResult[loop]);
     printf("\n");
 }
 
