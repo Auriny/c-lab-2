@@ -7,6 +7,10 @@
 
 constexpr int size = 20;
 
+int array1[size];
+int array2[size];
+int arrayResult[size];
+
 void print(const char *format, ...) {
     char buffer[1024];
     va_list args;
@@ -92,19 +96,47 @@ void fibonacci(void) {
 }
 
 void arraysKb(void) {
-    print("Введите цифры для массива (%d шт)", size);
-    int array[size];
+    print("Введите цифры для первого массива (%d шт)", size);
+    for (int i = 0; i < size; i++) {
+        scanf("%d", &array1[i]);
+    }
 
-    for (int i = 0; i < size; i++) scanf("%d", &array[i]);
+    print("Введите цифры для второго массива (%d шт)", size);
+    for (int i = 0; i < size; i++) {
+        scanf("%d", &array1[i]);
+    }
 }
 
 void arraysRandom(void) {
-    int rarray[size];
+    // воот бы форич...
+    for (int i = 0; i < size; i++) array1[i] = rand() % 10;
+    for (int i = 0; i < size; i++) array2[i] = rand() % 10;
+}
 
-    for (int i = 0; i < size; i++) { // тут походу нет foreach????
-        rarray[i] = rand() % 10;
-        print("%d ", rarray[i]);
+void thirdArr(void) {
+    for (int i = 0; i < size; i++) {
+        if (array1[i] == array2[i]) {
+            arrayResult[i] = array1[i];
+        }
     }
+
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+
+        }
+    }
+
+    print("Первый массив:");
+    for (int loop = 0; loop < size; loop++) printf("%d ", array1[loop]);
+    printf("\n");
+
+    print("Второй массив:");
+    for (int loop = 0; loop < size; loop++) printf("%d ", array2[loop]);
+    printf("\n");
+
+    print("Третий массив (результат):");
+    for (int loop = 0; loop < size; loop++) printf("%d ", arrayResult[loop]);
+    printf("\n");
 }
 
 void arraysMenu(void) {
@@ -116,9 +148,8 @@ void arraysMenu(void) {
     scanf("%d", &a);
 
     switch(a) {
-        case 1: arraysKb(); break;
-        case 2: arraysRandom(); arraysRandom();
-            break;
+        case 1: arraysKb(); thirdArr(); break;
+        case 2: arraysRandom(); thirdArr(); break;
         default: illst(); break;
     }
 }
@@ -127,7 +158,6 @@ int main(void) {
     setlocale(LC_ALL, "Rus");
 
     size_t choice;
-
     while (1) {
         menu();
         scanf("%zu", &choice);
