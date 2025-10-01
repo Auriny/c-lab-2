@@ -119,7 +119,6 @@ void del(int arr[], int *n, int pos) {
     (*n)--;
 }
 
-
 void thirdArr(void) {
     int arrayResult[size];
     int len = 0;
