@@ -36,6 +36,7 @@ void menu(void) {
     print("[3] 1.2 Операторы ветвления");
     print("[4] 1.3 Циклы.");
     print("[5] Массивы (№7)");
+    print("[6] Строки и файлы (№3)");
 }
 
 void helloWorld(void) {
@@ -166,6 +167,61 @@ void arraysMenu(void) {
     }
 }
 
+void reverse(const char *src, char *dest) {
+    size_t len = strlen(src);
+    for (size_t i = 0; i < len; i++) {
+        dest[i] = src[len - 1 - i];
+    }
+    dest[len] = '\0';
+}
+
+int is_palindrome(const char *word) {
+    char reversed[256];
+    reverse(word, reversed);
+    return strcmp(word, reversed) == 0;
+}
+
+void stringFilesImpl(void) {
+    const char *input_path = "C:\\Users\\gudil\\CLionProjects\\Lab2\\6_lab\\input.txt";
+    const char *output_path = "C:\\Users\\gudil\\CLionProjects\\Lab2\\6_lab\\output.txt";
+
+    char last_word[256] = "";
+    char current_word[256] = "";
+
+    FILE *input = fopen(input_path, "r");
+    if (input == NULL) {
+        perror("input.txt");
+        return;
+    }
+
+    rewind(input);
+
+    FILE *output = fopen(output_path, "w");
+    if (output == NULL) {
+        perror("output.txt");
+        fclose(input);
+        return;
+    }
+
+    int fwf = 0;
+    while (fscanf(input, "%s", current_word) == 1) {
+        if (strcmp(current_word, last_word) != 0) {
+            if (is_palindrome(current_word)) {
+                if (fwf) {
+                    fprintf(output, " ");
+                }
+                fprintf(output, "%s", current_word);
+                fwf = 1;
+            }
+        }
+    }
+
+    fclose(input);
+    fclose(output);
+
+    print("Готово! Записано в output.txt");
+}
+
 int main(void) {
     setlocale(LC_ALL, "Rus");
 
@@ -181,6 +237,7 @@ int main(void) {
             case 3: convertDegrees(); break;
             case 4: fibonacci(); break;
             case 5: arraysMenu(); break;
+            case 6: stringFilesImpl(); break;
             default: illst(); break; // ISE костыль edition
         }
     }
