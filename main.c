@@ -107,7 +107,6 @@ void arraysKb(void) {
 }
 
 void arraysRandom(void) {
-    // воот бы форич...
     for (int i = 0; i < size; i++) array1[i] = rand() % 10;
     for (int i = 0; i < size; i++) array2[i] = rand() % 10;
 }
