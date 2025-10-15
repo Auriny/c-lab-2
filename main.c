@@ -37,6 +37,7 @@ void menu(void) {
     print("[4] 1.3 Циклы.");
     print("[5] Массивы (№7)");
     print("[6] Строки и файлы (№3)");
+    print("[7] Память и матрицы (№2)");
 }
 
 void helloWorld(void) {
@@ -185,42 +186,47 @@ void stringFilesImpl(void) {
     const char *input_path = "C:\\Users\\gudil\\CLionProjects\\Lab2\\6_lab\\input.txt";
     const char *output_path = "C:\\Users\\gudil\\CLionProjects\\Lab2\\6_lab\\output.txt";
 
+    char current_word[256];
     char last_word[256] = "";
-    char current_word[256] = "";
 
     FILE *input = fopen(input_path, "r");
-    if (input == NULL) {
+    if (!input) {
         perror("input.txt");
         return;
     }
 
+    while (fscanf(input, "%255s", current_word) == 1) {
+        strcpy(last_word, current_word);
+    }
+
+    size_t len = strlen(last_word);
+    if (len > 0 && last_word[len - 1] == '.')
+        last_word[len - 1] = '\0';
+
     rewind(input);
 
     FILE *output = fopen(output_path, "w");
-    if (output == NULL) {
-        perror("output.txt");
-        fclose(input);
-        return;
-    }
+    if (!output) { perror("output.txt"); fclose(input); return; }
 
-    int fwf = 0;
-    while (fscanf(input, "%s", current_word) == 1) {
-        if (strcmp(current_word, last_word) != 0) {
-            if (is_palindrome(current_word)) {
-                if (fwf) {
-                    fprintf(output, " ");
-                }
-                fprintf(output, "%s", current_word);
-                fwf = 1;
-            }
+    int first = 1;
+    while (fscanf(input, "%255s", current_word) == 1) {
+        len = strlen(current_word);
+        if (len > 0 && current_word[len - 1] == '.')
+            current_word[len - 1] = '\0';
+
+        if (is_palindrome(current_word) && strcmp(current_word, last_word) != 0) {
+            if (!first) fprintf(output, " ");
+            fprintf(output, "%s", current_word);
+            first = 0;
         }
     }
 
     fclose(input);
     fclose(output);
 
-    print("Готово! Записано в output.txt");
+    print("done");
 }
+
 
 int main(void) {
     setlocale(LC_ALL, "Rus");
