@@ -140,7 +140,7 @@ void thirdArr(void) {
         }
     }
 
-    print("Первый массив:");
+    print("Первый массив:"); // выводить массивы не получилось через мой принт :((
     for (int loop = 0; loop < size; loop++) printf("%d ", array1[loop]);
     printf("\n");
 
@@ -170,9 +170,8 @@ void arraysMenu(void) {
 
 void reverse(const char *src, char *dest) {
     size_t len = strlen(src);
-    for (size_t i = 0; i < len; i++) {
+    for (size_t i = 0; i < len; i++)
         dest[i] = src[len - 1 - i];
-    }
     dest[len] = '\0';
 }
 
@@ -182,51 +181,63 @@ int is_palindrome(const char *word) {
     return strcmp(word, reversed) == 0;
 }
 
-void stringFilesImpl(void) {
+int readWords(char words[][256], int *word_count, char *last_word) {
     const char *input_path = "C:\\Users\\gudil\\CLionProjects\\Lab2\\6_lab\\input.txt";
-    const char *output_path = "C:\\Users\\gudil\\CLionProjects\\Lab2\\6_lab\\output.txt";
-
-    char current_word[256];
-    char last_word[256] = "";
-
     FILE *input = fopen(input_path, "r");
     if (!input) {
         perror("input.txt");
-        return;
+        return 0;
     }
 
-    while (fscanf(input, "%255s", current_word) == 1) {
-        strcpy(last_word, current_word);
+    *word_count = 0;
+    while (fscanf(input, "%255s", words[*word_count]) == 1) {
+        strcpy(last_word, words[*word_count]);
+        (*word_count)++;
     }
 
     size_t len = strlen(last_word);
     if (len > 0 && last_word[len - 1] == '.')
         last_word[len - 1] = '\0';
 
-    rewind(input);
+    fclose(input);
+    return 1;
+}
 
+int writeWords(char words[][256], int word_count, const char *last_word) {
+    const char *output_path = "C:\\Users\\gudil\\CLionProjects\\Lab2\\6_lab\\output.txt";
     FILE *output = fopen(output_path, "w");
-    if (!output) { perror("output.txt"); fclose(input); return; }
+    if (!output) {
+        perror("output.txt");
+        return 0;
+    }
 
     int first = 1;
-    while (fscanf(input, "%255s", current_word) == 1) {
-        len = strlen(current_word);
-        if (len > 0 && current_word[len - 1] == '.')
-            current_word[len - 1] = '\0';
+    for (int i = 0; i < word_count; i++) {
+        size_t len = strlen(words[i]);
+        if (len > 0 && words[i][len - 1] == '.')
+            words[i][len - 1] = '\0';
 
-        if (is_palindrome(current_word) && strcmp(current_word, last_word) != 0) {
+        if (is_palindrome(words[i]) && strcmp(words[i], last_word) != 0) {
             if (!first) fprintf(output, " ");
-            fprintf(output, "%s", current_word);
+            fprintf(output, "%s", words[i]);
             first = 0;
         }
     }
 
-    fclose(input);
     fclose(output);
-
-    print("done");
+    return 1;
 }
 
+void stringFilesImpl(void) {
+    char words[1024][256];
+    int word_count = 0;
+    char last_word[256] = "";
+
+    if (!readWords(words, &word_count, last_word))return;
+    if (!writeWords(words, word_count, last_word))return;
+
+    print("done\n");
+}
 
 int main(void) {
     setlocale(LC_ALL, "Rus");
@@ -244,7 +255,7 @@ int main(void) {
             case 4: fibonacci(); break;
             case 5: arraysMenu(); break;
             case 6: stringFilesImpl(); break;
-            default: illst(); break; // ISE костыль edition
+            default: illst(); break;
         }
     }
 }
