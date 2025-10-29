@@ -233,13 +233,80 @@ void stringFilesImpl(void) {
     int word_count = 0;
     char last_word[256] = "";
 
-    if (!readWords(words, &word_count, last_word))return;
-    if (!writeWords(words, word_count, last_word))return;
+    if (!readWords(words, &word_count, last_word)) return;
+    if (!writeWords(words, word_count, last_word)) return;
 
     print("done\n");
 }
 
+void matrix(void) {
+    int rows,columns;
+    int high,low;
+
+    print("Введите количество СТРОК и СТОЛБЦОВ матрицы:");
+    scanf("%d %d", &rows, &columns);
+
+    int **matrix = malloc(rows * sizeof(int *));
+    int zero_counts[columns];
+    int k = 0;
+
+    for (int i = 0; i < columns; i++) zero_counts[i] = 0;
+
+    print("Введите ВЕРХНЮЮ и НИЖНЮЮ границы генератора");
+    scanf("%d %d", &high, &low);
+
+    for (int i = 0; i < rows; i++) {
+        matrix[i] = (int *)malloc(columns * sizeof(int));
+        if (matrix[i] == NULL) {
+            print("Ошибка выделения памяти для столбцов %d", i);
+            for (int j = 0; j < i; j++) free(matrix[j]);
+            free(matrix);
+        }
+    }
+
+    srand(time(NULL));
+
+    print("Заполненная матрица:");
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < columns; j++) {
+            matrix[i][j] = rand() % (high - low + 1);
+            printf("%d\t", matrix[i][j]);
+        }
+        print("");
+    }
+
+    print("");
+
+    int has = 0;
+    for (int j = 0; j < columns; j++) {
+        int zero = 0;
+        for (int i = 0; i < rows; i++) {
+            if (matrix[i][j] == 0) {
+                zero = 1;
+                zero_counts[j]++;
+            }
+        }
+
+        if (zero) {
+            k++;
+            print("В столбце %d есть %d нулевых эл.", j, zero_counts[j]);
+            has = 1;
+        }
+
+    }
+
+    if (!has) {
+        print("Нулевых элементов нет");
+        print("");
+    } else print("");
+
+    print("Освобождаю память");
+    for (int i = 0; i < rows; i++) free(matrix[i]);
+    free(matrix);
+}
+
 int main(void) {
+    srand(time(NULL));
     setlocale(LC_ALL, "Rus");
 
     size_t choice;
@@ -255,6 +322,8 @@ int main(void) {
             case 4: fibonacci(); break;
             case 5: arraysMenu(); break;
             case 6: stringFilesImpl(); break;
+            case 7: matrix(); break;
+
             default: illst(); break;
         }
     }
