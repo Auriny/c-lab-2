@@ -63,7 +63,7 @@ void vars(void) {
     print("int: %zu", sizeof(i));
     print("unsigned int: %zu", sizeof(ui));
     print("long: %zu", sizeof(l));
-    print("long long: %zu", sizeof(ll));
+    print("long long: %zu", sizeof(ll)); //xd
     print("float: %zu", sizeof(f));
     print("double: %zu", sizeof(d));
 }
