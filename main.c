@@ -5,6 +5,10 @@
 #include <stdlib.h>
 #include <time.h>
 
+static int **lastMatrix = NULL;
+static int lastRows = 0;
+static int lastCols = 0;
+
 constexpr int size = 20;
 
 int array1[size];
@@ -175,7 +179,7 @@ void reverse(const char *src, char *dest) {
     dest[len] = '\0';
 }
 
-int is_palindrome(const char *word) {
+int isPalindrome(const char *word) {
     char reversed[256];
     reverse(word, reversed);
     return strcmp(word, reversed) == 0;
@@ -217,7 +221,7 @@ int writeWords(char words[][256], int word_count, const char *last_word) {
         if (len > 0 && words[i][len - 1] == '.')
             words[i][len - 1] = '\0';
 
-        if (is_palindrome(words[i]) && strcmp(words[i], last_word) != 0) {
+        if (isPalindrome(words[i]) && strcmp(words[i], last_word) != 0) {
             if (!first) fprintf(output, " ");
             fprintf(output, "%s", words[i]);
             first = 0;
@@ -239,73 +243,112 @@ void stringFilesImpl(void) {
     print("done\n");
 }
 
-void matrix(void) {
-    int rows,columns;
-    int high,low;
-
-    print("Введите количество СТРОК и СТОЛБЦОВ матрицы:");
-    scanf("%d %d", &rows, &columns);
-
-    int **matrix = malloc(rows * sizeof(int *));
-    int zero_counts[columns];
-    int k = 0;
-
-    for (int i = 0; i < columns; i++) zero_counts[i] = 0;
-
-    print("Введите ВЕРХНЮЮ и НИЖНЮЮ границы генератора");
-    scanf("%d %d", &high, &low);
-
-    for (int i = 0; i < rows; i++) {
-        matrix[i] = (int *)malloc(columns * sizeof(int));
-        if (matrix[i] == NULL) {
-            print("Ошибка выделения памяти для столбцов %d", i);
-            for (int j = 0; j < i; j++) free(matrix[j]);
-            free(matrix);
-        }
-    }
-
-    srand(time(NULL));
-
-    print("Заполненная матрица:");
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < columns; j++) {
-            matrix[i][j] = rand() % (high - low + 1);
-            printf("%d\t", matrix[i][j]);
-        }
-        print("");
-    }
-
-    print("");
-
-    int has = 0;
-    for (int j = 0; j < columns; j++) {
-        int zero = 0;
-        for (int i = 0; i < rows; i++) {
-            if (matrix[i][j] == 0) {
-                zero = 1;
-                zero_counts[j]++;
-            }
-        }
-
-        if (zero) {
-            k++;
-            print("В столбце %d есть %d нулевых эл.", j, zero_counts[j]);
-            has = 1;
-        }
-
-    }
-
-    if (!has) {
-        print("Нулевых элементов нет");
-        print("");
-    } else print("");
-
-    print("Освобождаю память");
-    for (int i = 0; i < rows; i++) free(matrix[i]);
-    free(matrix);
+void readSize(const char *msg, int *rows, int *cols) {
+    print("%s", msg);
+    scanf("%d %d", rows, cols);
 }
 
-int main(void) {
+void readRange(const char *msg, int *low, int *high) {
+    print("%s", msg);
+    scanf("%d %d", low, high);
+}
+
+int** allocate(int rows, int cols) {
+    int **m = malloc(rows * sizeof(int*));
+    for (int i = 0; i < rows; i++) m[i] = malloc(cols * sizeof(int));
+    return m;
+}
+
+void find(int **m, int rows, int cols, int target) {
+    int found = 0;
+
+    for (int j = 0; j < cols; j++) {
+        int count = 0;
+
+        for (int i = 0; i < rows; i++)
+            if (m[i][j] == target)
+                count++;
+
+        if (count > 0) {
+            print("В столбце %d найдено %d значений %d", j, count, target);
+            found = 1;
+        }
+    }
+
+    if (!found) print("Значения %d в матрице нет\n", target);
+}
+
+void fill(int **m, int rows, int cols, int low, int high) {
+    srand(time(NULL));
+
+    for (int i = 0; i < rows; i++)
+        for (int j = 0; j < cols; j++)
+            m[i][j] = rand() % (high - low + 1) + low;
+}
+
+void printMatrix(int **m, int rows, int cols) {
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) printf("%d\t", m[i][j]);
+        print("");
+    }
+}
+
+void freeMatrix(int **m, int rows) {
+    for (int i = 0; i < rows; i++) free(m[i]);
+    free(m);
+}
+
+void freeLastMatrix() {
+    if (!lastMatrix) return;
+    freeMatrix(lastMatrix, lastRows);
+    lastMatrix = NULL;
+}
+
+void matrixMenuPt() {
+    if (!lastMatrix) {
+        print("Матрицы еще нет");
+        return;
+    }
+
+    int num;
+    print("Введите число для поиска: ");
+    scanf("%d", &num);
+
+    printMatrix(lastMatrix, lastRows, lastCols);
+
+    find(lastMatrix, lastRows, lastCols, num);
+}
+
+void matrix() {
+    int rows, cols;
+    readSize("Введите количество СТРОК и СТОЛБЦОВ: ", &rows, &cols);
+
+    int low, high;
+    readRange("Введите НИЖНЮЮ и ВЕРХНЮЮ границы генератора: ", &low, &high);
+
+    int **m = allocate(rows, cols);
+    fill(m, rows, cols, low, high);
+
+    print("Заполненная матрица:");
+    printMatrix(m, rows, cols);
+
+    lastMatrix = m;
+    lastRows = rows;
+    lastCols = cols;
+}
+
+void matrixMenu() {
+    print("[1] Создать новую матрицу");
+    print("[2] Повторить действие над предыдущей");
+
+    size_t sub;
+    scanf("%zu", &sub);
+
+    if (sub == 1) matrix();
+    else if (sub == 2) matrixMenuPt();
+}
+
+int main() {
     srand(time(NULL));
     setlocale(LC_ALL, "Rus");
 
@@ -315,14 +358,14 @@ int main(void) {
         scanf("%zu", &choice);
 
         switch(choice) {
-            case 0: return 0;
+            case 0: freeLastMatrix(); return 0;
             case 1: helloWorld(); break;
             case 2: vars(); break;
             case 3: convertDegrees(); break;
             case 4: fibonacci(); break;
             case 5: arraysMenu(); break;
             case 6: stringFilesImpl(); break;
-            case 7: matrix(); break;
+            case 7: matrixMenu77(); break;
 
             default: illst(); break;
         }
