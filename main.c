@@ -365,7 +365,7 @@ int main() {
             case 4: fibonacci(); break;
             case 5: arraysMenu(); break;
             case 6: stringFilesImpl(); break;
-            case 7: matrixMenu77(); break;
+            case 7: matrixMenu(); break;
 
             default: illst(); break;
         }
