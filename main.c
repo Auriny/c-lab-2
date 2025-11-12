@@ -301,7 +301,7 @@ void freeMatrix(int **m, int rows) {
 void freeLastMatrix() {
     if (!lastMatrix) return;
     freeMatrix(lastMatrix, lastRows);
-    lastMatrix = NULL;
+    lastMatrix = nullptr;
 }
 
 void matrixMenuPt() {
